@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 public class Card {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long our_id;
     private String id;
     private String oracle_id;

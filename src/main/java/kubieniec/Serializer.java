@@ -22,7 +22,7 @@ import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
 public class Serializer {
 
     public void readFile() {
-        try (FileReader reader = new FileReader("C:\\Users\\krzys\\IdeaProjects\\dbparser\\test.json")) {
+        try (FileReader reader = new FileReader("C:\\Users\\kkubieniec\\IdeaProjects\\dbparser\\test.json")) {
             JSONParser parser = new JSONParser();
             JSONArray arr = (JSONArray) parser.parse(reader);
             for (Object o : arr) {

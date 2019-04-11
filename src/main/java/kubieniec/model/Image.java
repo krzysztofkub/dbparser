@@ -9,13 +9,14 @@ import javax.persistence.*;
 @Data
 public class Image {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private SizeEnum size;
     private String url;
     @Column(unique = true)
     private String fileName;
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "card_our_id", referencedColumnName = "our_id")
     private Card card;
 
     public Image(SizeEnum size, String url) {
@@ -26,5 +27,45 @@ public class Image {
     }
 
     public Image() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public SizeEnum getSize() {
+        return size;
+    }
+
+    public void setSize(SizeEnum size) {
+        this.size = size;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
     }
 }
