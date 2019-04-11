@@ -1,5 +1,8 @@
 package kubieniec;
 
+import kubieniec.model.Card;
+import kubieniec.model.Image;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,29 +15,22 @@ import java.nio.file.Paths;
 
 public class ImageService {
 
-    public String saveImageFileFromUrl(String urlString, Long our_id) {
-        BufferedImage image = null;
-        URL url = null;
-        String fileTitle = "";
-        try {
-            url = new URL(urlString);
-            image = ImageIO.read(url);
+    public void saveImageFileFromCard(Card card) {
+        for (Image image : card.getImages()) {
+            try {
+                URL url = new URL(image.getUrl());
+                BufferedImage bufferedImage = ImageIO.read(url);
 
-            fileTitle = urlString.substring(8);
-            fileTitle = fileTitle.replaceAll("/", "_").replaceAll("\\.", "")
-                    .replaceAll("\\?", "");
 
-            if (!Files.exists(Paths.get("images/" + our_id))) {
-                new File("images/" + our_id).mkdirs();
+                if (!Files.exists(Paths.get("images/" + card.getId()))) {
+                    new File("images/" + card.getId()).mkdirs();
+                }
+
+                ImageIO.write(bufferedImage, "jpg", new File("images/" + card.getId() + "/" + image.getFileName() + ".jpg"));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
-            ImageIO.write(image, "jpg", new File("images/" + our_id + "/" + fileTitle + ".jpg"));
-        } catch (IOException e) {
-            e.printStackTrace();
         }
-
-        return fileTitle;
     }
-
-
 }

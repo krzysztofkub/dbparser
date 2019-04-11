@@ -1,6 +1,8 @@
 package kubieniec;
 
+import kubieniec.dao.CardDao;
 import kubieniec.dao.ImageDao;
+import kubieniec.model.Card;
 import kubieniec.model.Image;
 
 import java.util.List;
@@ -11,17 +13,10 @@ public class Main {
         serializer.readFile();
 
 
-        ImageDao imageDao = new ImageDao();
-        List<Image> imageList = imageDao.findAll();
-        System.out.println(imageList);
 
+        List<Card> cards = CardDao.findAll();
 
-//        ImageService imageService = new ImageService();
-//        ImageDao imageDao = new ImageDao();
-//        System.out.println( imageDao.findAll());
-//        for (Image image : imageDao.findAll()) {
-//            imageService.saveImageFileFromUrl(image.getUrl(),image.getCard().getOur_id());
-//        }
-//        System.out.println( imageDao.findAll());
+        ImageService imageService = new ImageService();
+        cards.forEach(imageService::saveImageFileFromCard);
     }
 }

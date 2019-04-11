@@ -1,11 +1,13 @@
 package kubieniec.dao;
 
+import kubieniec.model.Image;
 import kubieniec.utils.DBConnection;
 import kubieniec.model.Card;
 import org.hibernate.Session;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.List;
 
 public class CardDao {
 
@@ -24,5 +26,15 @@ public class CardDao {
         session.saveOrUpdate(card);
         session.getTransaction().commit();
         session.close();
+    }
+
+    public static List<Card> findAll() {
+        List cards = null;
+        Session session = dbConnection.getSession();
+        session.beginTransaction();
+        cards = dbConnection.getSession().createQuery("from Card").list();
+        session.getTransaction().commit();
+        session.close();
+        return cards;
     }
 }

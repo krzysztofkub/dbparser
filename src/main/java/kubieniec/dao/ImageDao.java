@@ -22,13 +22,18 @@ public class ImageDao {
     public static void saveImage(Image image) {
         Session session = dbConnection.getSession();
         session.beginTransaction();
-        Long id = (Long) session.save(image);
-        image.setId(id);
+        session.save(image);
         session.getTransaction().commit();
         session.close();
     }
 
-    public List<Image> findAll() {
-        return dbConnection.getSession().createQuery("from Image").list();
+    public static List<Image> findAll() {
+        List images = null;
+        Session session = dbConnection.getSession();
+        session.beginTransaction();
+        images = dbConnection.getSession().createQuery("from Image").list();
+        session.getTransaction().commit();
+        session.close();
+        return images;
     }
 }

@@ -6,6 +6,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -14,8 +15,6 @@ import java.util.List;
 @Data
 public class Card {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long our_id;
     private String id;
     private String oracle_id;
     private String multiiverse_ids;
@@ -31,7 +30,7 @@ public class Card {
     @OneToMany(cascade = CascadeType.ALL
             ,mappedBy = "card"
             ,fetch = FetchType.EAGER)
-    private List<Image> images;
+    private List<Image> images = new ArrayList<>();
     private String mana_cost;
     private String cmc;
     private String type_line;
