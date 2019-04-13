@@ -1,33 +1,38 @@
 package kubieniec;
 
+import com.sun.deploy.util.StringUtils;
 import kubieniec.dao.CardDao;
 import kubieniec.model.Card;
 import kubieniec.model.Image;
 import kubieniec.model.SizeEnum;
+import org.abego.treelayout.internal.util.java.lang.string.StringUtil;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.hibernate.metamodel.model.relational.spi.Size;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.sym.error;
+import java.util.Set;
 
 public class Serializer {
 
     public void readFile() {
-        try (FileReader reader = new FileReader("C:\\Users\\krzys\\IdeaProjects\\dbparser\\test.json")) {
+        try (FileReader reader = new FileReader("C:\\Users\\krzys\\IdeaProjects\\dbparser\\scryfall-default-cards.json")) {
             JSONParser parser = new JSONParser();
             JSONArray arr = (JSONArray) parser.parse(reader);
+
+            int counter = 0;
+
             for (Object o : arr) {
+                System.out.println(counter);
                 JSONObject cardJson = (JSONObject) o;
                 parse(cardJson);
+                counter++;
             }
 
         } catch (Exception e) {
@@ -36,18 +41,61 @@ public class Serializer {
     }
 
     private void parse(JSONObject cardJson) {
+        System.out.println(cardJson.get("id"));
         ObjectMapper mapper = new ObjectMapper();
-        String string = cardJson.toJSONString();
+        String jsonStriing = cardJson.toJSONString();
         try {
-            Card card = mapper.readValue(string, Card.class);
+            Card card = mapper.readValue(jsonStriing, Card.class);
+
+            JSONArray arr = (JSONArray) cardJson.get("colors");
+            if (arr != null) {
+                String string = arr.toJSONString();
+                card.setColors(string);
+            }
+
+            arr = (JSONArray) cardJson.get("color_identity");
+            if (arr != null) {
+                String string = arr.toJSONString();
+                card.setColor_identity(string);
+            }
+
+            arr = (JSONArray) cardJson.get("all_parts");
+            if (arr != null) {
+                String string = arr.toJSONString();
+                card.setAll_parts(string);
+            }
+
+            Map<String, String> map = (Map) cardJson.get("legalities");
+            Set<String> set = map.keySet();
+            StringBuilder sb = new StringBuilder();
+            set.stream().forEach(key -> sb.append(key + ":" + map.get(key)));
+            String legalities = sb.toString();
+            if (!legalities.isEmpty()) {
+                card.setLegalities(legalities);
+            }
+
+            arr = (JSONArray) cardJson.get("games");
+            if (arr != null) {
+                String string = arr.toJSONString();
+                card.setGames(string);
+            }
+
+            arr = (JSONArray) cardJson.get("prices");
+            if (arr != null) {
+                String string = arr.toJSONString();
+                card.setPrices(string);
+            }
 
             Map imagesMap = (Map) cardJson.get("image_uris");
             List<Image> images = parseImages(imagesMap);
-            images.stream().forEach(image -> image.setCard(card));
+            images.stream().forEach(image -> {
+                image.setCard(card);
+                card.setImages(images);
+            });
 
-            //TODO
 
-            card.setImages(images);
+
+
 
 
             CardDao.saveCard(card);
@@ -59,7 +107,7 @@ public class Serializer {
 
     private List<Image> parseImages(Map<String, String> imagesMap) {
         List<Image> images = new ArrayList<>();
-        imagesMap.keySet().stream().map(key -> new Image(getImageSize(key.toString()), imagesMap.get(key.toString()))).forEach(images::add);
+        imagesMap.keySet().stream().map(key -> new Image(getImageSize(key), imagesMap.get(key))).forEach(images::add);
         return images;
     }
 
@@ -90,5 +138,4 @@ public class Serializer {
         }
         return sizeEnum;
     }
-
 }

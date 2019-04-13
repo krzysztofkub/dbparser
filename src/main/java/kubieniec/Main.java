@@ -12,11 +12,9 @@ public class Main {
         Serializer serializer = new Serializer();
         serializer.readFile();
 
-
-
-        List<Card> cards = CardDao.findAll();
-
-        ImageService imageService = new ImageService();
-        cards.forEach(imageService::saveImageFileFromCard);
+//        List<Card> cards = CardDao.findAll();
+//
+//        ImageService imageService = new ImageService();
+//        cards.forEach(imageService::saveImageFileFromCard);
     }
 }

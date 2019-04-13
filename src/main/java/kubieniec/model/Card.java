@@ -1,6 +1,7 @@
 package kubieniec.model;
 
 
+import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import lombok.Data;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
@@ -43,6 +44,7 @@ public class Card {
     @JsonIgnore
     private String color_identity;
     @JsonIgnore
+    @Column(length = 1000)
     private String all_parts;
     @JsonIgnore
     private String legalities;
@@ -72,5 +74,7 @@ public class Card {
     private boolean story_spotlight;
     @JsonIgnore
     private String related_uris;
+    @JsonIgnore
+    private String prices;
 
 }
