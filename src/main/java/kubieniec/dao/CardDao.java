@@ -37,4 +37,12 @@ public class CardDao {
         session.close();
         return cards;
     }
+
+    public static long count() {
+        Session session = dbConnection.getSession();
+        long count = (long) session.createQuery("select count(*) from cards").uniqueResult();
+        session.getTransaction().commit();
+        session.close();
+        return count;
+    }
 }

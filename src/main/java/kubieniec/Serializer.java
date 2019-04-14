@@ -28,13 +28,16 @@ public class Serializer {
 
             int counter = 0;
 
+            long cardRows = CardDao.count();
+
             for (Object o : arr) {
                 System.out.println(counter);
-                JSONObject cardJson = (JSONObject) o;
-                parse(cardJson);
+                if (counter > cardRows) {
+                    JSONObject cardJson = (JSONObject) o;
+                    parse(cardJson);
+                }
                 counter++;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,12 +69,14 @@ public class Serializer {
             }
 
             Map<String, String> map = (Map) cardJson.get("legalities");
-            Set<String> set = map.keySet();
-            StringBuilder sb = new StringBuilder();
-            set.stream().forEach(key -> sb.append(key + ":" + map.get(key)));
-            String legalities = sb.toString();
-            if (!legalities.isEmpty()) {
-                card.setLegalities(legalities);
+            if (map != null) {
+                Set<String> set = map.keySet();
+                StringBuilder sb = new StringBuilder();
+                set.stream().forEach(key -> sb.append(key + ":" + map.get(key)));
+                String legalities = sb.toString();
+                if (!legalities.isEmpty()) {
+                    card.setLegalities(legalities);
+                }
             }
 
             arr = (JSONArray) cardJson.get("games");
@@ -80,35 +85,26 @@ public class Serializer {
                 card.setGames(string);
             }
 
-            arr = (JSONArray) cardJson.get("prices");
-            if (arr != null) {
-                String string = arr.toJSONString();
-                card.setPrices(string);
-            }
-
             Map imagesMap = (Map) cardJson.get("image_uris");
-            List<Image> images = parseImages(imagesMap);
-            images.stream().forEach(image -> {
-                image.setCard(card);
-                card.setImages(images);
-            });
-
-
-
-
-
+            if (imagesMap != null) {
+                List<Image> images = parseImages(imagesMap);
+                images.stream().forEach(image -> {
+                    image.setCard(card);
+                    card.setImages(images);
+                });
+            }
 
             CardDao.saveCard(card);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private List<Image> parseImages(Map<String, String> imagesMap) {
         List<Image> images = new ArrayList<>();
         imagesMap.keySet().stream().map(key -> new Image(getImageSize(key), imagesMap.get(key))).forEach(images::add);
         return images;
+
     }
 
     private SizeEnum getImageSize(String size) {

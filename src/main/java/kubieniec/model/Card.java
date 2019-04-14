@@ -5,6 +5,7 @@ import com.mysql.cj.x.protobuf.MysqlxDatatypes;
 import lombok.Data;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,7 +36,8 @@ public class Card {
     private String mana_cost;
     private String cmc;
     private String type_line;
-    @Column(length = 10000)
+    @Column(length = 65535, columnDefinition="TEXT")
+    @Type(type="text")
     private String oracle_text;
     private String power;
     private String toughness;
@@ -44,7 +46,8 @@ public class Card {
     @JsonIgnore
     private String color_identity;
     @JsonIgnore
-    @Column(length = 1000)
+    @Column(length = 65535, columnDefinition="TEXT")
+    @Type(type="text")
     private String all_parts;
     @JsonIgnore
     private String legalities;
